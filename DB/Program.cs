@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using WindowsInput;
 
 namespace DB
@@ -16,14 +15,12 @@ namespace DB
         {
             try
             {
-                // Determine whether the directory exists.
                 if (!Directory.Exists(path))
                 {
                     DirectoryInfo di = Directory.CreateDirectory(path);
                     Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
                     return;
                 }
-
             }
             catch (Exception e)
             {
@@ -56,9 +53,7 @@ namespace DB
                     Console.WriteLine("Nie wybrano nic. Sprubuj ponownie.");
                     showMenuGlowne();
                     return true;
-
             }
-
         }
 
         static void showPracownicy()
@@ -68,6 +63,7 @@ namespace DB
                 Console.Clear();
                 Console.WriteLine("Pracownicy:");
                 DirectoryInfo di = new DirectoryInfo(pathPracownicy);
+
                 foreach (var field in di.GetFiles()) // zmienna do wyszukania 
                 {
                     string Patch = pathPracownicy + '\\' + field.Name;
@@ -76,7 +72,6 @@ namespace DB
                     Pracownik pracownikRead = new Pracownik(pracownikObjFields[0], pracownikObjFields[1], pracownikObjFields[2], pracownikObjFields[3], pracownikObjFields[4], pracownikObjFields[5]);
                     Console.WriteLine(pracownikRead.IdPracownika + ". " + pracownikRead.Imie + " " + pracownikRead.Nazwisko);
                 }
-
             }
             catch (Exception e)
             {
@@ -97,10 +92,9 @@ namespace DB
                     string firmaObjRead = File.ReadAllText(Patch);
                     string[] firmaObjFields = firmaObjRead.Split(';');
                     Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
+
                     Console.WriteLine(firmaRead.IdFirmy + ". " + firmaRead.NazwaFirmy + " " + firmaRead.Nip + " " + firmaRead.Regon);
-
                 }
-
             }
             catch (Exception e)
             {
@@ -192,7 +186,7 @@ namespace DB
         {
             try
             {
-                string pathPracownik = @"c:\kontrahenci\pracownicy\" + pracownik.IdPracownika;
+                string pathPracownik = pathPracownicy + "\\" + pracownik.IdPracownika;
                 string pracownikObj = pracownik.IdPracownika + ";" + pracownik.IdFirmy + ";" + pracownik.Imie + ";" + pracownik.Nazwisko + ";" + pracownik.NrTelefonu + ";" + pracownik.Email;
                 pracownikObj = pracownikObj.Replace("\n", "").Replace("\r", "");
 
@@ -554,8 +548,6 @@ namespace DB
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
-
-
         }
 
         static void usunFirme(string id_firmy)
@@ -576,10 +568,12 @@ namespace DB
 
         public static void Main()
         {
-            // Create directories for DB
+
             createDir(pathGlowna);
             createDir(pathFirmy);
             createDir(pathPracownicy);
+
+            //Dane pokazowe
 
             Pracownik pracownik1 = new Pracownik("1", "3", "weqqw", "jhgjhgh", "1234569", "123@sdf.jon");
             Pracownik pracownik2 = new Pracownik("2", "2", "dsadas", "dsadasd", "1234569", "123@sdf.jon");
@@ -594,8 +588,8 @@ namespace DB
 
             zapiszFirme(firma1);
             zapiszFirme(firma2);
-            showMenuGlowne();
 
+            showMenuGlowne();
         }
     }
 }

@@ -41,7 +41,8 @@ namespace DB
             switch (Console.ReadLine())
             {
                 case "1":
-                    //showPracownicy();
+                    showFirmy();
+                    showMenuFirmy();
                     return true;
                 case "2":
                     showPracownicy();
@@ -83,7 +84,29 @@ namespace DB
             }
         }
 
+        static void showFirmy()
+        {
+            try
+            {
+                Console.Clear();
+                Console.WriteLine("Firmy:");
+                DirectoryInfo di = new DirectoryInfo(pathFirmy);
+                foreach (var field in di.GetFiles()) // zmienna do wyszukania 
+                {
+                    string Patch = pathFirmy + '\\' + field.Name;
+                    string firmaObjRead = File.ReadAllText(Patch);
+                    string[] firmaObjFields = firmaObjRead.Split(';');
+                    Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
+                    Console.WriteLine(firmaRead.IdFirmy + ". " + firmaRead.NazwaFirmy + " " + firmaRead.Nip + " " + firmaRead.Regon);
 
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+        }
 
         static bool showMenuPracownicy()
         {
@@ -107,7 +130,10 @@ namespace DB
                     zmienPracownika();
                     return true;
                 case "4":
-                    usunPracownika();
+                    Console.WriteLine("Podaj ID pracownika do usunięcia: ");
+                    usunPracownika(Console.ReadLine());
+                    showPracownicy();
+                    showMenuPracownicy();
                     return true;
                 case "9":
                     showMenuGlowne();
@@ -119,10 +145,49 @@ namespace DB
                     Console.WriteLine("Nie wybrano nic. Sprubuj ponownie.");
                     showMenuPracownicy();
                     return true;
-
             }
-
         }
+
+        static bool showMenuFirmy()
+        {
+            Console.WriteLine("\r\nWybierz opcje:");
+            Console.WriteLine("1) Dodaj nową firmę do bazy");
+            Console.WriteLine("2) Wyświetl dane firmy");
+            Console.WriteLine("3) Zmień dane firmy");
+            Console.WriteLine("4) Usuń firmę");
+            Console.WriteLine("9) Wróć do menu głównego");
+            Console.WriteLine("0) Wyjście");
+            Console.Write("\r\nWybrano opcje: ");
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    dodajFirme();
+                    return true;
+                case "2":
+                    pokazFirme();
+                    return true;
+                case "3":
+                    zmienFirme();
+                    return true;
+                case "4":
+                    Console.WriteLine("Podaj ID firmy do usunięcia: ");
+                    usunFirme(Console.ReadLine());
+                    showFirmy();
+                    showMenuFirmy();
+                    return true;
+                case "9":
+                    showMenuGlowne();
+                    return true;
+                case "0":
+                    System.Environment.Exit(1);
+                    return true;
+                default:
+                    Console.WriteLine("Nie wybrano nic. Sprubuj ponownie.");
+                    showMenuFirmy();
+                    return true;
+            }
+        }
+
         static void zapiszPracownika(Pracownik pracownik)
         {
             try
@@ -137,6 +202,29 @@ namespace DB
                     using (StreamWriter sw = File.CreateText(pathPracownik))
                     {
                         sw.WriteLine(pracownikObj);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+        }
+
+        static void zapiszFirme(Firma firma)
+        {
+            try
+            {
+                string pathFirma = pathFirmy + "\\" + firma.IdFirmy;
+                string firmaObj = firma.IdFirmy + ';' + firma.NazwaFirmy + ";" + firma.Nip + ";" + firma.Regon + ";" + firma.Miasto + ";" + firma.Ulica + ";" + firma.NrBudynku + ";" + firma.NrLokalu + ";" + firma.KodPocztowy + ";" + firma.Poczta + ";" + firma.NrTelefonu + ";" + firma.Kraj + ";" + firma.Email + ";" + firma.StronaWWW + ";" + firma.NrKonta + ";" + firma.Rabat;
+                firmaObj = firmaObj.Replace("\n", "").Replace("\r", "");
+
+                // zapis do pliku z obiektu
+                if (!File.Exists(pathFirma))
+                {
+                    using (StreamWriter sw = File.CreateText(pathFirma))
+                    {
+                        sw.WriteLine(firmaObj);
                     }
                 }
             }
@@ -173,6 +261,62 @@ namespace DB
             showMenuPracownicy();
         }
 
+        static void dodajFirme()
+        {
+            Firma firmyNowy = new Firma();
+
+            Console.WriteLine("Podaj ID firmy: ");
+            firmyNowy.IdFirmy = Console.ReadLine();
+
+            Console.WriteLine("Podaj nazwę firmy: ");
+            firmyNowy.NazwaFirmy = Console.ReadLine();
+
+            Console.WriteLine("Podaj NIP firmy: ");
+            firmyNowy.Nip = Console.ReadLine();
+
+            Console.WriteLine("Podaj REGON firmy: ");
+            firmyNowy.Regon = Console.ReadLine();
+
+            Console.WriteLine("Podaj miasto firmy: ");
+            firmyNowy.Miasto = Console.ReadLine();
+
+            Console.WriteLine("Podaj ulicę firmy: ");
+            firmyNowy.Ulica = Console.ReadLine();
+
+            Console.WriteLine("Podaj numer budynku firmy: ");
+            firmyNowy.NrBudynku = Console.ReadLine();
+
+            Console.WriteLine("Podaj numer lokalu firmy: ");
+            firmyNowy.NrLokalu = Console.ReadLine();
+
+            Console.WriteLine("Podaj kod pocztowy firmy: ");
+            firmyNowy.KodPocztowy = Console.ReadLine();
+
+            Console.WriteLine("Podaj pocztę firmy: ");
+            firmyNowy.Poczta = Console.ReadLine();
+
+            Console.WriteLine("Podaj numer telefonu do firmy: ");
+            firmyNowy.NrTelefonu = Console.ReadLine();
+
+            Console.WriteLine("Podaj kraj firmy: ");
+            firmyNowy.Kraj = Console.ReadLine();
+
+            Console.WriteLine("Podaj adres e-mail firmy: ");
+            firmyNowy.Email = Console.ReadLine();
+
+            Console.WriteLine("Podaj stronę WWW firmy: ");
+            firmyNowy.StronaWWW = Console.ReadLine();
+
+            Console.WriteLine("Podaj numer konta firmy: ");
+            firmyNowy.NrKonta = Console.ReadLine();
+
+            Console.WriteLine("Podaj rabat dla firmy: ");
+            firmyNowy.Rabat = Console.ReadLine();
+
+            zapiszFirme(firmyNowy);
+            showFirmy();
+            showMenuFirmy();
+        }
 
         static void pokazPracownika()
         {
@@ -191,7 +335,7 @@ namespace DB
                 Console.WriteLine("Imię pracownika: " + pracownikRead.Imie);
                 Console.WriteLine("Nazwisko pracownika: " + pracownikRead.Nazwisko);
                 Console.WriteLine("Numer telefonu pracownika: " + pracownikRead.NrTelefonu);
-                Console.WriteLine("Adres e-mail pracownika: " + pracownikRead.Email);
+                Console.WriteLine("Adres e-mail pracownika: " + pracownikRead.Email.Replace("\n", "").Replace("\r", ""));
 
                 Console.WriteLine("\r\nNaciśnij dowolny przycisk, by wrócić do listy pracowników");
                 Console.ReadKey();
@@ -202,8 +346,40 @@ namespace DB
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
+        }
 
+        static void pokazFirme()
+        {
+            try
+            {
+                Console.WriteLine("Podaj ID firmy do odczytania: ");
+                string firmaDoPokazania = pathFirmy + "\\" + Console.ReadLine();
+                string firmaObjRead = File.ReadAllText(firmaDoPokazania);
+                string[] firmaObjFields = firmaObjRead.Split(';');
+                Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
 
+                Console.Clear();
+                Console.WriteLine("ID firmy: " + firmaRead.IdFirmy);
+                Console.WriteLine("Nazwa firmy: " + firmaRead.NazwaFirmy);
+                Console.WriteLine("NIP: " + firmaRead.Nip);
+                Console.WriteLine("REGON: " + firmaRead.Regon);
+                Console.WriteLine(firmaRead.Miasto + " " + "Ul. " + firmaRead.Ulica + " " + firmaRead.NrBudynku + "/" + firmaRead.NrLokalu + " " + firmaRead.KodPocztowy + " " + firmaRead.Poczta);
+                Console.WriteLine("Numer telefonu: " + firmaRead.NrTelefonu);
+                Console.WriteLine("Kraj: " + firmaRead.Kraj);
+                Console.WriteLine("Email: " + firmaRead.Email);
+                Console.WriteLine("Strona WWW: " + firmaRead.StronaWWW);
+                Console.WriteLine("Numer konta: " + firmaRead.NrKonta);
+                Console.WriteLine("Rabat: " + firmaRead.Rabat.Replace("\n", "").Replace("\r", "") + "%");
+
+                Console.WriteLine("\r\nNaciśnij dowolny przycisk, by wrócić do listy firm");
+                Console.ReadKey();
+                showFirmy();
+                showMenuFirmy();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
         }
 
         static void zmienPracownika()
@@ -243,7 +419,6 @@ namespace DB
                 pracownikNowy.NrTelefonu = Console.ReadLine();
 
                 Console.Write("Adres e-mail pracownika: ");
-
                 sim.Keyboard.TextEntry(pracownikRead.Email);
                 pracownikNowy.Email = Console.ReadLine();
 
@@ -254,13 +429,7 @@ namespace DB
                 }
                 else
                 {
-                    string pracownikDoUsuniecia = pathPracownicy + "\\" + pracownikRead.IdPracownika;
-
-                    if (File.Exists(pracownikDoUsuniecia))
-                    {
-                        File.Delete(pracownikDoUsuniecia);
-                    }
-
+                    usunPracownika(pracownikRead.IdPracownika);
                     zapiszPracownika(pracownikNowy);
                     showPracownicy();
                     showMenuPracownicy();
@@ -270,23 +439,116 @@ namespace DB
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
-
-
-
         }
 
-        static void usunPracownika()
+        static void zmienFirme()
         {
             try
             {
-                Console.WriteLine("Podaj ID pracownika do usunięcia: ");
-                string pracownikDoUsuniecia = pathPracownicy + "\\" + Console.ReadLine();
+                Firma firmaNowy = new Firma();
+                InputSimulator sim = new InputSimulator();
+
+                Console.WriteLine("Podaj ID firmy do zmiany: ");
+
+                string firmaDoPokazania = pathFirmy + "\\" + Console.ReadLine();
+                string firmaObjRead = File.ReadAllText(firmaDoPokazania);
+                string[] firmaObjFields = firmaObjRead.Split(';');
+                Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15].Replace("\n", "").Replace("\r", ""));
+
+                Console.Clear();
+
+                Console.Write("ID firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.IdFirmy);
+                firmaNowy.IdFirmy = Console.ReadLine();
+
+                Console.Write("Nazwa firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.NazwaFirmy);
+                firmaNowy.NazwaFirmy = Console.ReadLine();
+
+                Console.Write("NIP firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Nip);
+                firmaNowy.Nip = Console.ReadLine();
+
+                Console.Write("REGON firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Regon);
+                firmaNowy.Regon = Console.ReadLine();
+
+                Console.Write("Miasto firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Miasto);
+                firmaNowy.Miasto = Console.ReadLine();
+
+                Console.Write("Ulica firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Ulica);
+                firmaNowy.Ulica = Console.ReadLine();
+
+                Console.Write("Numer budynku firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.NrBudynku);
+                firmaNowy.NrBudynku = Console.ReadLine();
+
+                Console.Write("Numer lokalu firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.NrLokalu);
+                firmaNowy.NrLokalu = Console.ReadLine();
+
+                Console.Write("Kod pocztowy firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.KodPocztowy);
+                firmaNowy.KodPocztowy = Console.ReadLine();
+
+                Console.Write("Poczta firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Poczta);
+                firmaNowy.Poczta = Console.ReadLine();
+
+                Console.Write("Numer telefonu firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.NrTelefonu);
+                firmaNowy.NrTelefonu = Console.ReadLine();
+
+                Console.Write("Kraj firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Kraj);
+                firmaNowy.Kraj = Console.ReadLine();
+
+                Console.Write("E-mail firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Email);
+                firmaNowy.Email = Console.ReadLine();
+
+                Console.Write("Strona WWW firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.StronaWWW);
+                firmaNowy.StronaWWW = Console.ReadLine();
+
+                Console.Write("Numer konta firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.NrKonta);
+                firmaNowy.NrKonta = Console.ReadLine();
+
+                Console.Write("Rabat dla firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.Rabat);
+                firmaNowy.Rabat = Console.ReadLine();
+
+                if (firmaNowy == firmaRead)
+                {
+                    showFirmy();
+                    showMenuFirmy();
+                }
+                else
+                {
+                    usunFirme(firmaRead.IdFirmy);
+                    zapiszFirme(firmaNowy);
+                    showFirmy();
+                    showMenuFirmy();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+        }
+
+        static void usunPracownika(string id_pracownika)
+        {
+            try
+            {
+                string pracownikDoUsuniecia = pathPracownicy + "\\" + id_pracownika;
                 if (File.Exists(pracownikDoUsuniecia))
                 {
                     File.Delete(pracownikDoUsuniecia);
                 }
-                showPracownicy();
-                showMenuPracownicy();
             }
             catch (Exception e)
             {
@@ -296,13 +558,21 @@ namespace DB
 
         }
 
-
-
-
-
-
-
-
+        static void usunFirme(string id_firmy)
+        {
+            try
+            {
+                string firmaDoUsuniecia = pathFirmy + "\\" + id_firmy;
+                if (File.Exists(firmaDoUsuniecia))
+                {
+                    File.Delete(firmaDoUsuniecia);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+        }
 
         public static void Main()
         {
@@ -310,17 +580,6 @@ namespace DB
             createDir(pathGlowna);
             createDir(pathFirmy);
             createDir(pathPracownicy);
-
-
-            //TODO: CIN
-            //TODO: zapis w pliku txt CHECK 
-            //TODO: odczyt z pliku CHECK
-            //TODO: wyszukiwanie pliku CHECK
-            //TODO:  modyfikacja = porównanie 2 obj (odczytanego i cin) żeby niepotrzebnie nie deletować
-            //TODO: usuwanie pliku CHECK
-
-            //ID jako nazwa pliku
-
 
             Pracownik pracownik1 = new Pracownik("1", "3", "weqqw", "jhgjhgh", "1234569", "123@sdf.jon");
             Pracownik pracownik2 = new Pracownik("2", "2", "dsadas", "dsadasd", "1234569", "123@sdf.jon");
@@ -330,60 +589,13 @@ namespace DB
             zapiszPracownika(pracownik2);
             zapiszPracownika(pracownik3);
 
+            Firma firma1 = new Firma("1", "nazwa", "912213312", "123123123", "Resovia", "Szportowa", "2", "10", "22-222", "Rzeszów", "123123123", "Polska", "test@test.com", "www.firma.pl", "212345678654321345678765", "10");
+            Firma firma2 = new Firma("2", "nazwa1", "912214312", "12312343123", "Rzeszów", "Chopina", "2", "10", "12-222", "Kielnarowa", "987987987", "Polska", "test2@test.com", "www.firma2.pl", "212345678632321345678765", "6");
+
+            zapiszFirme(firma1);
+            zapiszFirme(firma2);
             showMenuGlowne();
 
-
-
-            /*
-
-
-                        Pracownik pracownik = new Pracownik("22", "2", "weqqw", "dsadasd", "1234569", "123@sdf.jon");
-                        //Console.WriteLine();
-
-                        string pathPracownik = @"c:\kontrahenci\pracownicy\" + pracownik.IdPracownika;
-                        string pracownikObj = pracownik.IdPracownika + ";" + pracownik.IdFirmy + ";" + pracownik.Imie + ";" + pracownik.Nazwisko + ";" + pracownik.NrTelefonu + ";" + pracownik.Email;
-
-                        // zapis do pliku z obiektu
-                        if (!File.Exists(pathPracownik))
-                        {
-                            using (StreamWriter sw = File.CreateText(pathPracownik))
-                            {
-                                sw.WriteLine(pracownikObj);
-                            }
-                        }
-
-                        // odczyt z pliku do objektu
-                        string pracownikObjRead = File.ReadAllText(pathPracownik);
-                        string[] pracownikObjFields = pracownikObjRead.Split(';');
-
-                        Pracownik pracownikRead = new Pracownik(pracownikObjFields[0], pracownikObjFields[1], pracownikObjFields[2], pracownikObjFields[3], pracownikObjFields[4], pracownikObjFields[5]);
-
-                        //Console.WriteLine(pracownikRead.Imie);
-
-                        // wyszukiwanie
-                        DirectoryInfo d = new DirectoryInfo(pathPracownicy);
-                        foreach (var field in d.GetFiles("2")) // zmienna do wyszukania 
-                        {
-                            Console.WriteLine(field.Name);
-                            string aaa = pathPracownicy + '\'+ field.Name;
-                        }
-
-                        //Usuwanie
-                        if (File.Exists(pathPracownik))
-                        {
-                            File.Delete(pathPracownik);
-
-                        }
-
-
-
-
-                        //System.IO.File.WriteAllText(@"C:\Users\Public\TestFolder\WriteText.txt", text);
-
-                        /*foreach (var field in pracownik)
-                        {
-                            Console.WriteLine(pracownikObj);
-                        }*/
         }
     }
 }

@@ -23,6 +23,8 @@ namespace DB
         public string NrKonta { get; set; }
         public string Rabat { get; set; }
 
+        public Firma()
+        { }
 
         public Firma(string idfirmy, string nazwafirmy, string nip, string regon, string miasto, string ulica, string nrbudynku,
             string nrlokalu, string kodpocztowy, string poczta, string nrtelefonu, string kraj, string email, string stronawww, string nrkonta, string rabat)
@@ -38,13 +40,38 @@ namespace DB
             KodPocztowy = kodpocztowy;
             Poczta = poczta;
             NrTelefonu = nrtelefonu;
+            Kraj = kraj;
             Email = email;
             StronaWWW = stronawww;
             NrKonta = nrkonta;
             Rabat = rabat;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Firma))
+                return false;
+
+            var other = obj as Firma;
+
+            if (IdFirmy != other.IdFirmy || NazwaFirmy != other.NazwaFirmy || Nip != other.Nip || Regon != other.Regon || Miasto != other.Miasto || Ulica != other.Ulica || NrBudynku != other.NrBudynku || NrLokalu != other.NrLokalu || KodPocztowy != other.KodPocztowy || Poczta != other.Poczta || NrTelefonu != other.NrTelefonu || Kraj != other.Kraj || Email != other.Email || StronaWWW != other.StronaWWW || NrKonta != other.NrKonta || Rabat != other.Rabat)
+                return false;
+
+            return true;
+        }
+
+        public static bool operator ==(Firma x, Firma y)
+        {
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(Firma x, Firma y)
+        {
+            return !(x == y);
+        }
+
+
 
     }
-
 }
+

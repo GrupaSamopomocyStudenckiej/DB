@@ -118,7 +118,10 @@ namespace DB
                     dodajPracownika();
                     return true;
                 case "2":
-                    pokazPracownika();
+                    Console.WriteLine("Podaj ID pracownika do odczytania: ");
+                    pokazPracownika(Console.ReadLine());
+                    showPracownicy();
+                    showMenuPracownicy();
                     return true;
                 case "3":
                     zmienPracownika();
@@ -158,7 +161,10 @@ namespace DB
                     dodajFirme();
                     return true;
                 case "2":
-                    pokazFirme();
+                    Console.WriteLine("Podaj ID firmy do odczytania: ");
+                    pokazFirme(Console.ReadLine());
+                    showFirmy();
+                    showMenuFirmy();
                     return true;
                 case "3":
                     zmienFirme();
@@ -210,7 +216,7 @@ namespace DB
             try
             {
                 string pathFirma = pathFirmy + "\\" + firma.IdFirmy;
-                string firmaObj = firma.IdFirmy + ';' + firma.NazwaFirmy + ";" + firma.Nip + ";" + firma.Regon + ";" + firma.Miasto + ";" + firma.Ulica + ";" + firma.NrBudynku + ";" + firma.NrLokalu + ";" + firma.KodPocztowy + ";" + firma.Poczta + ";" + firma.NrTelefonu + ";" + firma.Kraj + ";" + firma.Email + ";" + firma.StronaWWW + ";" + firma.NrKonta + ";" + firma.Rabat;
+                string firmaObj = firma.IdFirmy + ";" + firma.IdSiedzibyFirmy + ';' + firma.NazwaFirmy + ";" + firma.Nip + ";" + firma.Regon + ";" + firma.Miasto + ";" + firma.Ulica + ";" + firma.NrBudynku + ";" + firma.NrLokalu + ";" + firma.KodPocztowy + ";" + firma.Poczta + ";" + firma.NrTelefonu + ";" + firma.Kraj + ";" + firma.Email + ";" + firma.StronaWWW + ";" + firma.NrKonta;
                 firmaObj = firmaObj.Replace("\n", "").Replace("\r", "");
 
                 // zapis do pliku z obiektu
@@ -262,6 +268,9 @@ namespace DB
             Console.WriteLine("Podaj ID firmy: ");
             firmyNowy.IdFirmy = Console.ReadLine();
 
+            Console.WriteLine("Podaj ID siedziby firmy: ");
+            firmyNowy.IdSiedzibyFirmy = Console.ReadLine();
+
             Console.WriteLine("Podaj nazwę firmy: ");
             firmyNowy.NazwaFirmy = Console.ReadLine();
 
@@ -304,20 +313,18 @@ namespace DB
             Console.WriteLine("Podaj numer konta firmy: ");
             firmyNowy.NrKonta = Console.ReadLine();
 
-            Console.WriteLine("Podaj rabat dla firmy: ");
-            firmyNowy.Rabat = Console.ReadLine();
+
 
             zapiszFirme(firmyNowy);
             showFirmy();
             showMenuFirmy();
         }
 
-        static void pokazPracownika()
+        static void pokazPracownika(String id_pracownika)
         {
             try
             {
-                Console.WriteLine("Podaj ID pracownika do odczytania: ");
-                string pracownikDoPokazania = pathPracownicy + "\\" + Console.ReadLine();
+                string pracownikDoPokazania = pathPracownicy + "\\" + id_pracownika;
 
                 string pracownikObjRead = File.ReadAllText(pracownikDoPokazania);
                 string[] pracownikObjFields = pracownikObjRead.Split(';');
@@ -331,29 +338,47 @@ namespace DB
                 Console.WriteLine("Numer telefonu pracownika: " + pracownikRead.NrTelefonu);
                 Console.WriteLine("Adres e-mail pracownika: " + pracownikRead.Email.Replace("\n", "").Replace("\r", ""));
 
-                Console.WriteLine("\r\nNaciśnij dowolny przycisk, by wrócić do listy pracowników");
-                Console.ReadKey();
-                showPracownicy();
-                showMenuPracownicy();
+                Console.WriteLine("\r\n 1) Wróć do listy pracowników");
+                Console.WriteLine("\n 2) Wyświetl dane firmy, w której pracuje");
+                //  TO DO: podpiac do wyświetlania szczegółowych danych firmy (relacja) dzięki równości wartosci ID firmy.
+                // TO DO : SWITCH
+                //TO DO: FUNKCJA LINIA 642
+
             }
             catch (Exception e)
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
         }
+        static void wyszukajPracownikowFirmy(String id_firmy)
+        {
+            DirectoryInfo di = new DirectoryInfo(pathPracownicy);
+            foreach (var field in di.GetFiles())
+            {
+                string Patch = pathPracownicy + '\\' + field.Name;
+                string pracownikObjRead = File.ReadAllText(Patch);
+                string[] pracownikObjFields = pracownikObjRead.Split(';');
+                if (pracownikObjFields[1] == id_firmy)
+                {
+                    Pracownik pracownikRead = new Pracownik(pracownikObjFields[0], pracownikObjFields[1], pracownikObjFields[2], pracownikObjFields[3], pracownikObjFields[4], pracownikObjFields[5]);
+                    Console.WriteLine(pracownikRead.IdPracownika + ". " + pracownikRead.Imie + " " + pracownikRead.Nazwisko);
+                }
+            }
+        }
 
-        static void pokazFirme()
+        static bool pokazFirme(String id_firmy)
         {
             try
             {
-                Console.WriteLine("Podaj ID firmy do odczytania: ");
-                string firmaDoPokazania = pathFirmy + "\\" + Console.ReadLine();
+
+                string firmaDoPokazania = pathFirmy + "\\" + id_firmy;
                 string firmaObjRead = File.ReadAllText(firmaDoPokazania);
                 string[] firmaObjFields = firmaObjRead.Split(';');
                 Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
 
                 Console.Clear();
                 Console.WriteLine("ID firmy: " + firmaRead.IdFirmy);
+                Console.WriteLine("ID siedziby firmy: " + firmaRead.IdSiedzibyFirmy);
                 Console.WriteLine("Nazwa firmy: " + firmaRead.NazwaFirmy);
                 Console.WriteLine("NIP: " + firmaRead.Nip);
                 Console.WriteLine("REGON: " + firmaRead.Regon);
@@ -362,17 +387,42 @@ namespace DB
                 Console.WriteLine("Kraj: " + firmaRead.Kraj);
                 Console.WriteLine("Email: " + firmaRead.Email);
                 Console.WriteLine("Strona WWW: " + firmaRead.StronaWWW);
-                Console.WriteLine("Numer konta: " + firmaRead.NrKonta);
-                Console.WriteLine("Rabat: " + firmaRead.Rabat.Replace("\n", "").Replace("\r", "") + "%");
+                Console.WriteLine("Numer konta: " + firmaRead.NrKonta.Replace("\n", "").Replace("\r", "") + "%");
 
-                Console.WriteLine("\r\nNaciśnij dowolny przycisk, by wrócić do listy firm");
-                Console.ReadKey();
-                showFirmy();
-                showMenuFirmy();
+                Console.WriteLine("\r\n1) Wróc do listy firm");
+                Console.WriteLine("2) Wyświetl jej pracowników");
+                Console.WriteLine("3) Wyświetl jej siedzibę");
+                Console.Write("Wybrano opcje: ");
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        showFirmy();
+                        showMenuFirmy();
+                        return true;
+                    case "2":
+                        wyszukajPracownikowFirmy(firmaRead.IdFirmy);
+                        return true;
+                        //TODO: WYRZUCA NAS Z POWROTEM, NIE WYSWIETLA DANYCH FIRMY  LINE 619
+                    case "3":
+                        //        if (firmaRead.IdSiedzibyFirmy=="0")
+                        //         {
+                        //             Console.WriteLine("To jest siedziba firmy");
+                        //         }
+                        //         else
+                        //         {
+                        Console.WriteLine(firmaRead.IdSiedzibyFirmy);
+                        //wyszukajSiedzibeFirmy(firmaRead.IdSiedzibyFirmy);
+                        //   }
+                        return true;
+                    default:
+                        Console.WriteLine("Nie wybrano nic. Sprubuj ponownie.");
+                        return false;
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
+                return false;
             }
         }
 
@@ -455,6 +505,10 @@ namespace DB
                 sim.Keyboard.TextEntry(firmaRead.IdFirmy);
                 firmaNowy.IdFirmy = Console.ReadLine();
 
+                Console.Write("ID siedziby firmy: ");
+                sim.Keyboard.TextEntry(firmaRead.IdSiedzibyFirmy);
+                firmaNowy.IdSiedzibyFirmy = Console.ReadLine();
+
                 Console.Write("Nazwa firmy: ");
                 sim.Keyboard.TextEntry(firmaRead.NazwaFirmy);
                 firmaNowy.NazwaFirmy = Console.ReadLine();
@@ -511,10 +565,6 @@ namespace DB
                 sim.Keyboard.TextEntry(firmaRead.NrKonta);
                 firmaNowy.NrKonta = Console.ReadLine();
 
-                Console.Write("Rabat dla firmy: ");
-                sim.Keyboard.TextEntry(firmaRead.Rabat);
-                firmaNowy.Rabat = Console.ReadLine();
-
                 if (firmaNowy == firmaRead)
                 {
                     showFirmy();
@@ -566,6 +616,46 @@ namespace DB
             }
         }
 
+        static void wyszukajSiedzibeFirmy(String id_siedziby)
+        {
+            DirectoryInfo di = new DirectoryInfo(pathFirmy);
+            foreach (var field in di.GetFiles())
+            {
+                string Patch = pathFirmy + '\\' + field.Name;
+                string FirmaObjRead = File.ReadAllText(Patch);
+                string[] firmaObjFields = FirmaObjRead.Split(';');
+                if (firmaObjFields[1] == id_siedziby)
+                {
+                    Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
+                    Console.WriteLine(firmaRead.NazwaFirmy + ". " + firmaRead.Nip + " " + firmaRead.Regon);
+                }
+                else
+                if (firmaObjFields[1] == "0")
+                {
+                    Console.WriteLine("To jest siedziba firmy");
+                }
+
+
+
+            }
+        }
+        static void wyszukajFirmePracownika(String id_firmy)
+        {
+            DirectoryInfo di = new DirectoryInfo(pathFirmy);
+            foreach (var field in di.GetFiles())
+            {
+                string Patch = pathFirmy + '\\' + field.Name;
+                string FirmaObjRead = File.ReadAllText(Patch);
+                string[] firmaObjFields = FirmaObjRead.Split(';');
+                if (firmaObjFields[1] == id_firmy)
+                {
+                    Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
+                    Console.WriteLine(firmaRead.NazwaFirmy + ". " + firmaRead.Nip + " " + firmaRead.Regon);
+                }
+
+
+            }
+        }
         public static void Main()
         {
 
@@ -583,13 +673,14 @@ namespace DB
             zapiszPracownika(pracownik2);
             zapiszPracownika(pracownik3);
 
-            Firma firma1 = new Firma("1", "nazwa", "912213312", "123123123", "Resovia", "Szportowa", "2", "10", "22-222", "Rzeszów", "123123123", "Polska", "test@test.com", "www.firma.pl", "212345678654321345678765", "10");
-            Firma firma2 = new Firma("2", "nazwa1", "912214312", "12312343123", "Rzeszów", "Chopina", "2", "10", "12-222", "Kielnarowa", "987987987", "Polska", "test2@test.com", "www.firma2.pl", "212345678632321345678765", "6");
+            Firma firma1 = new Firma("1", "0", "nazwa", "912213312", "123123123", "Resovia", "Szportowa", "2", "10", "22-222", "Rzeszów", "123123123", "Polska", "test@test.com", "www.firma.pl", "212345678654321345678765");
+            Firma firma2 = new Firma("2", "1", "nazwa1", "912214312", "12312343123", "Rzeszów", "Chopina", "2", "10", "12-222", "Kielnarowa", "987987987", "Polska", "test2@test.com", "www.firma2.pl", "212345678632321345678765");
 
             zapiszFirme(firma1);
             zapiszFirme(firma2);
 
             showMenuGlowne();
         }
+
     }
 }

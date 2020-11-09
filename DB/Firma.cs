@@ -7,6 +7,7 @@ namespace DB
     class Firma
     {
         public string IdFirmy { get; set; }
+        public string IdSiedzibyFirmy { get; set; }
         public string NazwaFirmy { get; set; }
         public string Nip { get; set; }
         public string Regon { get; set; }
@@ -21,15 +22,16 @@ namespace DB
         public string Email { get; set; }
         public string StronaWWW { get; set; }
         public string NrKonta { get; set; }
-        public string Rabat { get; set; }
+        
 
         public Firma()
         { }
 
-        public Firma(string idfirmy, string nazwafirmy, string nip, string regon, string miasto, string ulica, string nrbudynku,
-            string nrlokalu, string kodpocztowy, string poczta, string nrtelefonu, string kraj, string email, string stronawww, string nrkonta, string rabat)
+        public Firma(string idfirmy, string idsiedzibyfirmy, string nazwafirmy, string nip, string regon, string miasto, string ulica, string nrbudynku,
+            string nrlokalu, string kodpocztowy, string poczta, string nrtelefonu, string kraj, string email, string stronawww, string nrkonta)
         {
             IdFirmy = idfirmy;
+            IdSiedzibyFirmy = idsiedzibyfirmy;
             NazwaFirmy = nazwafirmy;
             Nip = nip;
             Regon = regon;
@@ -44,7 +46,6 @@ namespace DB
             Email = email;
             StronaWWW = stronawww;
             NrKonta = nrkonta;
-            Rabat = rabat;
         }
 
         public override bool Equals(object obj)
@@ -54,7 +55,7 @@ namespace DB
 
             var other = obj as Firma;
 
-            if (IdFirmy != other.IdFirmy || NazwaFirmy != other.NazwaFirmy || Nip != other.Nip || Regon != other.Regon || Miasto != other.Miasto || Ulica != other.Ulica || NrBudynku != other.NrBudynku || NrLokalu != other.NrLokalu || KodPocztowy != other.KodPocztowy || Poczta != other.Poczta || NrTelefonu != other.NrTelefonu || Kraj != other.Kraj || Email != other.Email || StronaWWW != other.StronaWWW || NrKonta != other.NrKonta || Rabat != other.Rabat)
+            if (IdFirmy != other.IdFirmy || NazwaFirmy != other.NazwaFirmy || Nip != other.Nip || Regon != other.Regon || Miasto != other.Miasto || Ulica != other.Ulica || NrBudynku != other.NrBudynku || NrLokalu != other.NrLokalu || KodPocztowy != other.KodPocztowy || Poczta != other.Poczta || NrTelefonu != other.NrTelefonu || Kraj != other.Kraj || Email != other.Email || StronaWWW != other.StronaWWW || NrKonta != other.NrKonta || IdSiedzibyFirmy != other.IdSiedzibyFirmy)
                 return false;
 
             return true;

@@ -335,7 +335,7 @@ namespace DB
             }
             if (czyZnalazl == false)
             {
-                Console.WriteLine("Błąd wyszukania");
+                Console.WriteLine("Błąd wyszukania, brak odpowiadających rekordów w bazie");
             }
             Console.ReadKey(true);
             showMenuPracownicy();
@@ -400,7 +400,7 @@ namespace DB
             }
             if (czyZnalazl == false)
             {
-                Console.WriteLine("Błąd wyszukania");
+                Console.WriteLine("Błąd wyszukania, brak odpowiadających rekordów w bazie");
             }
             Console.ReadKey(true);
             showMenuFirmy();
@@ -434,7 +434,7 @@ namespace DB
             }
             if (czyZnalazl == false)
             {
-                Console.WriteLine("Błąd wyszukania");
+                Console.WriteLine("Błąd wyszukania, brak odpowiadających rekordów w bazie");
             }
             Console.ReadKey(true);
             showMenuFirmy();
@@ -706,9 +706,11 @@ namespace DB
 
             Firma firma1 = new Firma("1", "0", "nazwa", "912213312", "123123123", "Resovia", "Szportowa", "2", "10", "22-222", "Rzeszów", "123123123", "Polska", "test@test.com", "www.firma.pl", "212345678654321345678765");
             Firma firma2 = new Firma("2", "1", "nazwa1", "912214312", "12312343123", "Rzeszów", "Chopina", "2", "10", "12-222", "Kielnarowa", "987987987", "Polska", "test2@test.com", "www.firma2.pl", "212345678632321345678765");
+            Firma firma3 = new Firma("3", "", "nazw35", "914312", "12312343", "Rzeszów", "Chopina", "2", "10", "12-222", "Kielnarowa", "987987987", "Polska", "test2@test.com", "www.firma2.pl", "212345678632321345678765");
 
             zapiszFirme(firma1);
             zapiszFirme(firma2);
+            zapiszFirme(firma3);
 
             showMenuGlowne();
         }

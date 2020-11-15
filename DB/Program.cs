@@ -46,7 +46,7 @@ namespace DB
                     showMenuPracownicy();
                     return true;
                 case "0":
-                    System.Environment.Exit(1);
+                    Environment.Exit(1);
                     return true;
 
                 default:
@@ -64,7 +64,7 @@ namespace DB
                 Console.WriteLine("Pracownicy:");
                 DirectoryInfo di = new DirectoryInfo(pathPracownicy);
 
-                foreach (var field in di.GetFiles()) // zmienna do wyszukania 
+                foreach (FileInfo field in di.GetFiles()) // zmienna do wyszukania 
                 {
                     string Patch = pathPracownicy + '\\' + field.Name;
                     string pracownikObjRead = File.ReadAllText(Patch);
@@ -86,7 +86,7 @@ namespace DB
                 Console.Clear();
                 Console.WriteLine("Firmy:");
                 DirectoryInfo di = new DirectoryInfo(pathFirmy);
-                foreach (var field in di.GetFiles()) // zmienna do wyszukania 
+                foreach (FileInfo field in di.GetFiles()) // zmienna do wyszukania 
                 {
                     string Patch = pathFirmy + '\\' + field.Name;
                     string firmaObjRead = File.ReadAllText(Patch);
@@ -120,8 +120,6 @@ namespace DB
                 case "2":
                     Console.WriteLine("Podaj ID pracownika do odczytania: ");
                     pokazPracownika(Console.ReadLine());
-                    showPracownicy();
-                    showMenuPracownicy();
                     return true;
                 case "3":
                     zmienPracownika();
@@ -163,8 +161,6 @@ namespace DB
                 case "2":
                     Console.WriteLine("Podaj ID firmy do odczytania: ");
                     pokazFirme(Console.ReadLine());
-                    showFirmy();
-                    showMenuFirmy();
                     return true;
                 case "3":
                     zmienFirme();
@@ -199,10 +195,8 @@ namespace DB
                 // zapis do pliku z obiektu
                 if (!File.Exists(pathPracownik))
                 {
-                    using (StreamWriter sw = File.CreateText(pathPracownik))
-                    {
-                        sw.WriteLine(pracownikObj);
-                    }
+                    using StreamWriter sw = File.CreateText(pathPracownik);
+                    sw.WriteLine(pracownikObj);
                 }
             }
             catch (Exception e)
@@ -222,10 +216,8 @@ namespace DB
                 // zapis do pliku z obiektu
                 if (!File.Exists(pathFirma))
                 {
-                    using (StreamWriter sw = File.CreateText(pathFirma))
-                    {
-                        sw.WriteLine(firmaObj);
-                    }
+                    using StreamWriter sw = File.CreateText(pathFirma);
+                    sw.WriteLine(firmaObj);
                 }
             }
             catch (Exception e)
@@ -319,8 +311,24 @@ namespace DB
             showFirmy();
             showMenuFirmy();
         }
-
-        static void pokazPracownika(String id_pracownika)
+        static void wyszukajFirmePracownika(string id_firmy)
+        {
+            DirectoryInfo di = new DirectoryInfo(pathFirmy);
+            foreach (FileInfo field in di.GetFiles())
+            {
+                if (field.Name == id_firmy)
+                {
+                    string Patch = pathFirmy + '\\' + field.Name;
+                    string FirmaObjRead = File.ReadAllText(Patch);
+                    string[] firmaObjFields = FirmaObjRead.Split(';');
+                    Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
+                    Console.WriteLine(firmaRead.NazwaFirmy + ". " + firmaRead.Nip + " " + firmaRead.Regon);
+                }
+            }
+            Console.ReadKey(true);
+            showMenuPracownicy();
+        }
+        static bool pokazPracownika(string id_pracownika)
         {
             try
             {
@@ -338,22 +346,36 @@ namespace DB
                 Console.WriteLine("Numer telefonu pracownika: " + pracownikRead.NrTelefonu);
                 Console.WriteLine("Adres e-mail pracownika: " + pracownikRead.Email.Replace("\n", "").Replace("\r", ""));
 
-                Console.WriteLine("\r\n 1) Wróć do listy pracowników");
-                Console.WriteLine("\n 2) Wyświetl dane firmy, w której pracuje");
-                //  TO DO: podpiac do wyświetlania szczegółowych danych firmy (relacja) dzięki równości wartosci ID firmy.
-                // TO DO : SWITCH
-                //TO DO: FUNKCJA LINIA 642
+                Console.WriteLine("\n1) Wróć do listy pracowników");
+                Console.WriteLine("2) Wyświetl dane firmy, w której pracuje");
+                Console.Write("Wybrano opcje: ");
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        showPracownicy();
+                        showMenuPracownicy();
+                        return true;
+                    case "2":
+                        wyszukajFirmePracownika(pracownikRead.IdFirmy);
+                        return true;
+
+                    default:
+                        Console.WriteLine("Nie wybrano nic. Sprubuj ponownie.");
+                        return false;
+                }
+            
 
             }
             catch (Exception e)
             {
                 Console.WriteLine("The process failed: {0}", e.ToString());
+                return false;
             }
         }
-        static void wyszukajPracownikowFirmy(String id_firmy)
+        static void wyszukajPracownikowFirmy(string id_firmy)
         {
             DirectoryInfo di = new DirectoryInfo(pathPracownicy);
-            foreach (var field in di.GetFiles())
+            foreach (FileInfo field in di.GetFiles())
             {
                 string Patch = pathPracownicy + '\\' + field.Name;
                 string pracownikObjRead = File.ReadAllText(Patch);
@@ -364,9 +386,28 @@ namespace DB
                     Console.WriteLine(pracownikRead.IdPracownika + ". " + pracownikRead.Imie + " " + pracownikRead.Nazwisko);
                 }
             }
+            Console.ReadKey(true);
+            showMenuFirmy();
         }
-
-        static bool pokazFirme(String id_firmy)
+        static void wyszukajSiedzibeFirmy(string id_siedziby)
+        {
+            DirectoryInfo di = new DirectoryInfo(pathFirmy);
+            foreach (FileInfo field in di.GetFiles())
+            {
+                if (field.Name == id_siedziby)
+                {
+                    string Patch = pathFirmy + '\\' + field.Name;
+                    string FirmaObjRead = File.ReadAllText(Patch);
+                    string[] firmaObjFields = FirmaObjRead.Split(';');
+                    Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
+                    Console.WriteLine(firmaRead.NazwaFirmy + ". " + firmaRead.Nip + " " + firmaRead.Regon);
+                }
+                
+            }
+            Console.ReadKey(true);
+            showMenuFirmy();
+        }
+        static bool pokazFirme(string id_firmy)
         {
             try
             {
@@ -402,17 +443,18 @@ namespace DB
                     case "2":
                         wyszukajPracownikowFirmy(firmaRead.IdFirmy);
                         return true;
-                        //TODO: WYRZUCA NAS Z POWROTEM, NIE WYSWIETLA DANYCH FIRMY  LINE 619
+
                     case "3":
-                        //        if (firmaRead.IdSiedzibyFirmy=="0")
-                        //         {
-                        //             Console.WriteLine("To jest siedziba firmy");
-                        //         }
-                        //         else
-                        //         {
-                        Console.WriteLine(firmaRead.IdSiedzibyFirmy);
-                        //wyszukajSiedzibeFirmy(firmaRead.IdSiedzibyFirmy);
-                        //   }
+                        if (firmaRead.IdSiedzibyFirmy == "0")
+                        {
+                            Console.WriteLine("To jest siedziba firmy");
+                            Console.ReadKey(true);
+                            showMenuFirmy();
+                        }
+                        else
+                        {
+                            wyszukajSiedzibeFirmy(firmaRead.IdSiedzibyFirmy);
+                        }
                         return true;
                     default:
                         Console.WriteLine("Nie wybrano nic. Sprubuj ponownie.");
@@ -616,46 +658,8 @@ namespace DB
             }
         }
 
-        static void wyszukajSiedzibeFirmy(String id_siedziby)
-        {
-            DirectoryInfo di = new DirectoryInfo(pathFirmy);
-            foreach (var field in di.GetFiles())
-            {
-                string Patch = pathFirmy + '\\' + field.Name;
-                string FirmaObjRead = File.ReadAllText(Patch);
-                string[] firmaObjFields = FirmaObjRead.Split(';');
-                if (firmaObjFields[1] == id_siedziby)
-                {
-                    Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
-                    Console.WriteLine(firmaRead.NazwaFirmy + ". " + firmaRead.Nip + " " + firmaRead.Regon);
-                }
-                else
-                if (firmaObjFields[1] == "0")
-                {
-                    Console.WriteLine("To jest siedziba firmy");
-                }
 
 
-
-            }
-        }
-        static void wyszukajFirmePracownika(String id_firmy)
-        {
-            DirectoryInfo di = new DirectoryInfo(pathFirmy);
-            foreach (var field in di.GetFiles())
-            {
-                string Patch = pathFirmy + '\\' + field.Name;
-                string FirmaObjRead = File.ReadAllText(Patch);
-                string[] firmaObjFields = FirmaObjRead.Split(';');
-                if (firmaObjFields[1] == id_firmy)
-                {
-                    Firma firmaRead = new Firma(firmaObjFields[0], firmaObjFields[1], firmaObjFields[2], firmaObjFields[3], firmaObjFields[4], firmaObjFields[5], firmaObjFields[6], firmaObjFields[7], firmaObjFields[8], firmaObjFields[9], firmaObjFields[10], firmaObjFields[11], firmaObjFields[12], firmaObjFields[13], firmaObjFields[14], firmaObjFields[15]);
-                    Console.WriteLine(firmaRead.NazwaFirmy + ". " + firmaRead.Nip + " " + firmaRead.Regon);
-                }
-
-
-            }
-        }
         public static void Main()
         {
 

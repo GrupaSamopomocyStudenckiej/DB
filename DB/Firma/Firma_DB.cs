@@ -8,31 +8,36 @@ namespace DB
 {
     class Firma_DB
     {
-        /* public static string DlaFaktur(SQLiteConnection conn)
-         {
-             SQLiteDataReader sqlite_datareader;
-             SQLiteCommand sqlite_cmd;
-             sqlite_cmd = conn.CreateCommand();
+        public static string DlaFaktur(SQLiteConnection conn)
+        {
+            SQLiteDataReader sqlite_datareader;
+            SQLiteCommand sqlite_cmd;
+            sqlite_cmd = conn.CreateCommand();
 
-             sqlite_cmd.CommandText = "select * from firmy;";
+            sqlite_cmd.CommandText = "select * from firmy;";
 
-             Queue<Firma> IdNazwa = new Queue<Firma>();
+            Queue<Firma> firmy = new Queue<Firma>();
 
-             sqlite_datareader = sqlite_cmd.ExecuteReader();
-             while (sqlite_datareader.Read())
-             {
-                 Firma firma = new Firma
-                 {
-                     IdFirmy = sqlite_datareader.GetInt32(0).ToString(),
-                     NazwaFirmy = sqlite_datareader.GetString(1)
-                 };
-                 IdNazwa.Enqueue(firma);
-             }
-
-             string json = JsonSerializer.Serialize(IdNazwa);
-
-             return json;
-         }*/
+            sqlite_datareader = sqlite_cmd.ExecuteReader();
+            while (sqlite_datareader.Read())
+            {
+                Firma firma = new Firma();
+                firma.IdFirmy = sqlite_datareader.GetInt32(0).ToString();
+                firma.NazwaFirmy = sqlite_datareader.GetString(2);
+                firma.Nip = sqlite_datareader.GetString(3);
+                firma.Miasto = sqlite_datareader.GetString(5);
+                firma.Ulica = sqlite_datareader.GetString(6);
+                firma.NrBudynku = sqlite_datareader.GetString(7);
+                firma.NrLokalu = sqlite_datareader.GetString(8);
+                firma.KodPocztowy = sqlite_datareader.GetString(9);
+                firma.Poczta = sqlite_datareader.GetString(10);
+                firma.Kraj = sqlite_datareader.GetString(12);
+                firma.NrKonta = sqlite_datareader.GetString(15);
+                firmy.Enqueue(firma);
+            }
+            string json = JsonSerializer.Serialize(firmy);
+            return json;
+        }
 
         public static Firma ReadDaneFirmy(SQLiteConnection conn, string IdFirmy)
         {

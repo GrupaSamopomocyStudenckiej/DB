@@ -1,6 +1,7 @@
 ﻿using System;
 using static DB.ConnectToSQLite;
 using static DB.Firma_F;
+using static DB.Firma_DB;
 using static DB.Pracownik_F;
 namespace DB
 {
@@ -38,8 +39,9 @@ namespace DB
 
         public static void Main()
         {
-            FirstRun();
-            ShowMenuGlowne();
+            Console.WriteLine(DlaFaktur(CreateConnection()));
+            //FirstRun();
+            //ShowMenuGlowne();
         }
 
     }
